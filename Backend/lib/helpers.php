@@ -53,9 +53,9 @@ function url(string $path = ''): string
     $path = ltrim(str_replace('\\', '/', $path), '/');
     $base = basePath();
     if ($path === '') {
-        return $base ?: '/';
+        return $base ? '/' . $base : '/';
     }
-    return ($base ? $base . '/' : '/') . $path;
+    return ($base ? '/' . $base . '/' : '/') . $path;
 }
 
 /** Build a full absolute URL including scheme and host */
