@@ -1,0 +1,2 @@
+# Backend — restrict directory listing; api, admin, uploads served via root rules
+Options -Indexes

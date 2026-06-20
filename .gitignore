@@ -1,0 +1,15 @@
+# Local secrets — never commit
+Backend/config/groq.local.php
+Backend/config/database.local.php
+.env
+
+# Uploads (user content)
+Backend/uploads/cars/*
+!Backend/uploads/cars/.gitkeep
+!Backend/uploads/cars/.htaccess
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

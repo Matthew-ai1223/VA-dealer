@@ -1,0 +1,65 @@
+# VA Auto Sales — Root Apache configuration
+# Works in subfolder (e.g. /VA_AUT_SALES/) or at domain root
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Block direct access to sensitive application folders
+    RewriteRule ^(?:database|Backend/config|Backend/lib|Backend/models)(?:/|$) - [F,L]
+
+    # Clean public URLs (optional shortcuts)
+    RewriteRule ^cars/?$ Frontend/listings.php [L,QSA]
+    RewriteRule ^car/([0-9]+)/?$ Frontend/car.php?id=$1 [L,QSA]
+
+    # Serve real files and directories as-is
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Homepage when visiting project root
+    RewriteRule ^$ Frontend/index.php [L]
+</IfModule>
+
+# Default documents
+DirectoryIndex index.php Frontend/index.php
+
+# Security hardening
+Options -Indexes -MultiViews
+AddDefaultCharset UTF-8
+
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+</IfModule>
+
+# Block sensitive files from web access
+<FilesMatch "(?i)\.(sql|md|log|env|ini|bak|example\.php|local\.php)$">
+    Require all denied
+</FilesMatch>
+
+<FilesMatch "(?i)^(guide|report)\.md$">
+    Require all denied
+</FilesMatch>
+
+# Limit HTTP methods (allow REST verbs for API)
+<LimitExcept GET POST PUT DELETE PATCH HEAD OPTIONS>
+    Require all denied
+</LimitExcept>
+
+# Compression for faster loading
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript application/javascript application/json image/svg+xml
+</IfModule>
+
+# Browser caching for static assets
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+</IfModule>

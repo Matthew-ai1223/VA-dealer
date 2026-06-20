@@ -1,0 +1,334 @@
+/* VA Auto Sales - Admin Styles */
+.admin-body {
+  background: #f1f5f9;
+  min-height: 100vh;
+}
+
+.admin-header {
+  background: #0f172a;
+  color: #fff;
+  padding: 0;
+}
+
+.admin-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+
+.admin-header__brand {
+  font-weight: 800;
+  font-size: 1.0625rem;
+  color: #fff;
+}
+.admin-header__brand:hover { color: #93c5fd; }
+
+.admin-nav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.admin-nav a {
+  color: rgba(255,255,255,0.75);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+.admin-nav a:hover { color: #fff; }
+
+.admin-nav__user {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.8125rem;
+}
+
+.admin-main {
+  padding: 32px 20px 64px;
+}
+
+.admin-login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.admin-login__card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 40px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.12);
+}
+
+.admin-login__header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.admin-login__header h1 { font-size: 1.5rem; margin-bottom: 4px; }
+.admin-login__header p { color: #64748b; font-size: 0.9375rem; }
+
+.admin-login__footer {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 0.875rem;
+}
+
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+  border-left: 4px solid #1e40af;
+}
+
+.stat-card--success { border-left-color: #10b981; }
+.stat-card--muted { border-left-color: #94a3b8; }
+
+.stat-card__value {
+  display: block;
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.stat-card__label {
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+.admin-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.admin-toolbar h2 {
+  font-size: 1.375rem;
+  font-weight: 800;
+}
+
+.admin-form {
+  background: #fff;
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+}
+
+.admin-form--wide { max-width: 800px; }
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-group--full { grid-column: 1 / -1; }
+
+.form-group--checkbox label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #475569;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #1e40af;
+}
+
+.form-group small {
+  display: block;
+  margin-top: 4px;
+  color: #94a3b8;
+  font-size: 0.8125rem;
+}
+
+.form-fieldset {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 24px 0;
+}
+
+.form-fieldset legend {
+  font-weight: 700;
+  font-size: 0.9375rem;
+  padding: 0 8px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.btn--danger {
+  background: #ef4444;
+  color: #fff;
+  border-color: #ef4444;
+}
+.btn--danger:hover {
+  background: #dc2626;
+  border-color: #dc2626;
+  color: #fff;
+}
+
+.table-responsive {
+  overflow-x: auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.admin-table th {
+  background: #f8fafc;
+  text-align: left;
+  padding: 14px 16px;
+  font-weight: 600;
+  color: #475569;
+  border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.admin-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.admin-table__thumb {
+  width: 64px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 6px;
+  background: #e2e8f0;
+}
+
+.admin-table__actions {
+  display: flex;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.inline-form { display: inline; }
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge--success { background: #ecfdf5; color: #065f46; }
+.badge--muted { background: #f1f5f9; color: #64748b; }
+
+.image-preview-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.image-preview__badge {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  background: #1e40af;
+  color: #fff;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  z-index: 1;
+}
+
+.image-upload-status {
+  margin-bottom: 16px;
+  font-size: 0.875rem;
+  color: #475569;
+}
+
+.text-warning { color: #d97706; font-weight: 600; }
+
+.image-preview {
+  position: relative;
+  width: 120px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+
+.image-preview img {
+  width: 100%;
+  height: 80px;
+  object-fit: cover;
+}
+
+.image-preview__remove {
+  display: block;
+  padding: 6px;
+  background: #f8fafc;
+  font-size: 0.75rem;
+  text-align: center;
+  cursor: pointer;
+}
+
+.admin-footer {
+  background: #fff;
+  border-top: 1px solid #e2e8f0;
+  padding: 16px 0;
+  text-align: center;
+  font-size: 0.8125rem;
+  color: #94a3b8;
+}
+
+@media (max-width: 768px) {
+  .admin-stats { grid-template-columns: 1fr; }
+  .form-grid { grid-template-columns: 1fr; }
+  .admin-nav { gap: 8px; }
+  .admin-nav__user { display: none; }
+}

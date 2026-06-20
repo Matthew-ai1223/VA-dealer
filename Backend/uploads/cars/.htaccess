@@ -1,0 +1,4 @@
+# Prevent script execution in uploads directory
+<FilesMatch "\.php$">
+    Require all denied
+</FilesMatch>
