@@ -70,6 +70,12 @@ function fullUrl(string $path = ''): string
     return $scheme . '://' . $host . $relative;
 }
 
+/** Full shareable URL for a car listing (uses clean /car/{id} path) */
+function carShareUrl(int $carId): string
+{
+    return fullUrl('car/' . $carId);
+}
+
 function appConfig(): array
 {
     static $config = null;

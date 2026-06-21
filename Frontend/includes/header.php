@@ -27,7 +27,7 @@ $canonical = $canonical ?? fullUrl('Frontend/' . basename($_SERVER['PHP_SELF']))
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<?= sanitize(url('Frontend/assets/css/style.css')) ?>?v=3">
+    <link rel="stylesheet" href="<?= sanitize(url('Frontend/assets/css/style.css')) ?>?v=4">
     <link rel="icon" href="<?= sanitize(url('Frontend/assets/images/favicon.svg')) ?>" type="image/svg+xml">
     <script>window.APP_BASE = <?= json_encode(basePath(), JSON_UNESCAPED_SLASHES) ?>;</script>
 </head>

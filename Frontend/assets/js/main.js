@@ -272,4 +272,75 @@
       console.debug('WhatsApp contact initiated');
     });
   });
+
+  // Copy car listing link to clipboard
+  function showShareToast(message) {
+    var toast = document.getElementById('share-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'share-toast';
+      toast.className = 'share-toast';
+      toast.setAttribute('role', 'status');
+      toast.setAttribute('aria-live', 'polite');
+      document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.classList.add('is-visible');
+    clearTimeout(toast._hideTimer);
+    toast._hideTimer = setTimeout(function () {
+      toast.classList.remove('is-visible');
+    }, 2600);
+  }
+
+  function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      return navigator.clipboard.writeText(text);
+    }
+    return new Promise(function (resolve, reject) {
+      var textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.setAttribute('readonly', '');
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        var ok = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        ok ? resolve() : reject(new Error('copy failed'));
+      } catch (err) {
+        document.body.removeChild(textarea);
+        reject(err);
+      }
+    });
+  }
+
+  document.querySelectorAll('.js-share-car').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      var url = btn.getAttribute('data-share-url');
+      if (!url) return;
+
+      var originalLabel = btn.innerHTML;
+
+      copyText(url)
+        .then(function () {
+          showShareToast('Link copied! Share it anywhere.');
+          btn.classList.add('is-copied');
+          if (btn.classList.contains('btn--share')) {
+            btn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg> Copied';
+          }
+          clearTimeout(btn._resetTimer);
+          btn._resetTimer = setTimeout(function () {
+            btn.classList.remove('is-copied');
+            btn.innerHTML = originalLabel;
+          }, 2000);
+        })
+        .catch(function () {
+          showShareToast('Could not copy. Link: ' + url);
+        });
+    });
+  });
 })();
