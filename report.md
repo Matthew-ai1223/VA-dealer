@@ -1,8 +1,8 @@
 # VA Auto Sales — Stage 1 Project Report
 
-**Project:** Car Listing Web Application (Foundation System)  
-**Date:** June 20, 2026  
-**Status:** Complete — ready for local use and deployment  
+**Project:** Car Listing Web Application  
+**Date:** June 21, 2026  
+**Status:** Stage 1 complete · Stage 2 (CRM & Lead Management) complete  
 **Stack:** HTML, CSS, JavaScript · PHP · MySQL  
 
 ---
@@ -258,23 +258,51 @@ Before deploying to production:
 
 ---
 
-## 13. Stage 2 Readiness
+## 13. Stage 2 — Lead Management & CRM ✅
 
-The codebase is prepared for future automation:
+Stage 2 adds lead capture, buyer tracking, admin CRM, source analytics, and email notifications per `guide2.md`.
 
-| Area | Stage 2 Hook |
-|------|--------------|
-| `Backend/lib/helpers.php` | `whatsappLink()` — add lead logging before redirect |
-| `Frontend/assets/js/main.js` | WhatsApp click listener — send lead event to API |
-| `Backend/config/app.php` | Reserved for WhatsApp API keys and automation settings |
-| `database/schema.sql` | Comments for `lead_id`, `whatsapp_thread_id` columns |
-| `Backend/api/` | New endpoints can be added alongside existing CRUD |
+### New database tables
 
-Suggested Stage 2 additions:
-- `leads` table to track WhatsApp inquiries
-- WhatsApp Business API integration
-- Admin lead inbox / CRM view
-- Email notifications on new leads
+| Table | Purpose |
+|-------|---------|
+| `leads` | Customer inquiries (name, phone, email, vehicle, budget, source, status) |
+| `lead_notes` | Internal admin notes per lead |
+| `lead_activities` | Tracking log (views, WhatsApp clicks, form submissions) |
+
+**Run migration:** visit `setup.php` again, or run `php scripts/migrate-stage2.php`
+
+### Public features (car detail page)
+
+- **Request Information** form
+- **Book Inspection** form
+- **Request Callback** form
+- Automatic **vehicle view** tracking (once per session)
+- **WhatsApp click** tracking on listing cards and detail page
+
+### Admin CRM
+
+| URL | Description |
+|-----|-------------|
+| `Backend/admin/leads.php` | Overview stats, source analytics, leads table |
+| `Backend/admin/lead-detail.php?id=1` | Lead profile, status pipeline, notes, activity timeline |
+
+**Pipeline statuses:** New → Contacted → Interested → Negotiating → Closed Won / Closed Lost
+
+### API
+
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
+| POST | `Backend/api/leads.php` | Public | Submit lead form |
+| POST | `Backend/api/leads.php?action=track` | Public | Log view / WhatsApp click |
+| GET | `Backend/api/leads.php` | Admin | List leads (filters + pagination) |
+| GET | `Backend/api/leads.php?id=1` | Admin | Lead detail + notes + activities |
+| GET | `Backend/api/leads.php?stats=1` | Admin | Analytics JSON |
+| PUT | `Backend/api/leads.php?id=1` | Admin | Update status |
+
+### Email notifications
+
+Set `admin_email` in `Backend/config/app.php` to receive alerts when new leads arrive. Uses PHP `mail()` — configure SMTP on production if needed.
 
 ---
 
@@ -291,11 +319,15 @@ Suggested Stage 2 additions:
 | Add / edit / delete car | ✅ Ready |
 | Image upload | ✅ Ready |
 | Sold status hides from public | ✅ Ready |
+| Lead forms on car detail page | ✅ Ready |
+| WhatsApp click tracking | ✅ Ready |
+| Admin CRM (leads list + detail) | ✅ Ready |
+| Stage 2 database migration | ✅ Passed |
 
 ---
 
 ## 15. Conclusion
 
-Stage 1 of VA Auto Sales is fully implemented per the project guide. The system provides a professional public car listing experience and a complete admin management panel. It is modular, documented, and ready to run locally on XAMPP or deploy to any PHP/MySQL hosting environment.
+Stages 1 and 2 of VA Auto Sales are implemented. The platform provides public car listings, AI support, lead capture forms, WhatsApp tracking, and a CRM-style admin panel for managing buyer inquiries.
 
-**Next step:** Stage 2 — lead tracking and WhatsApp automation.
+**Optional next steps:** WhatsApp Business API automation, SMS alerts, lead export (CSV), and role-based admin permissions.

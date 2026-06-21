@@ -21,6 +21,13 @@ $adminUsername = $_SESSION['admin_username'] ?? 'Admin';
             <a href="dashboard.php" class="admin-header__brand"><?= sanitize($config['site_name']) ?> Admin</a>
             <nav class="admin-nav">
                 <a href="dashboard.php">Dashboard</a>
+                <a href="leads.php">Leads<?php
+                    try {
+                        require_once __DIR__ . '/../../models/Lead.php';
+                        $newCount = (new Lead())->countNewSince(date('Y-m-d', strtotime('-7 days')));
+                        if ($newCount > 0) echo ' <span class="admin-nav__badge">' . (int) $newCount . '</span>';
+                    } catch (Throwable $e) { /* tables may not exist yet */ }
+                ?></a>
                 <a href="add-car.php">Add Car</a>
                 <a href="<?= sanitize(url('Frontend/index.php')) ?>" target="_blank">View Site</a>
                 <span class="admin-nav__user"><?= sanitize($adminUsername) ?></span>

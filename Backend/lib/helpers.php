@@ -136,6 +136,54 @@ function whatsappLink(string $carTitle, float $price, ?string $carId = null): st
     return 'https://wa.me/' . $config['whatsapp_number'] . '?text=' . rawurlencode($message);
 }
 
+/** Build a WhatsApp message body from lead form data */
+function leadWhatsAppMessage(array $data): string
+{
+    $typeLabels = [
+        'request_info'      => 'Request Information',
+        'book_inspection'   => 'Book Inspection',
+        'request_callback'  => 'Request Callback',
+        'whatsapp'          => 'WhatsApp Inquiry',
+    ];
+    $type = $typeLabels[$data['inquiry_type'] ?? ''] ?? 'Vehicle Inquiry';
+    $vehicle = $data['interested_vehicle'] ?? 'this vehicle';
+    $price = $data['price_formatted'] ?? '';
+
+    $lines = [];
+    if ($price !== '') {
+        $lines[] = sprintf("I'm interested in %s priced at %s", $vehicle, $price);
+    } else {
+        $lines[] = sprintf("I'm interested in %s", $vehicle);
+    }
+    $lines[] = '';
+    $lines[] = '*Your details*';
+    $lines[] = 'Name: ' . ($data['full_name'] ?? '');
+    $lines[] = 'Phone: ' . ($data['phone_number'] ?? '');
+
+    if (!empty($data['email'])) {
+        $lines[] = 'Email: ' . $data['email'];
+    }
+    if (isset($data['budget']) && $data['budget'] !== '' && $data['budget'] !== null) {
+        $lines[] = 'Budget: ' . formatPrice((float) $data['budget']);
+    }
+    if (!empty($data['message'])) {
+        $lines[] = 'Details: ' . $data['message'];
+    }
+    $lines[] = 'Request type: ' . $type;
+    if (!empty($data['car_id'])) {
+        $lines[] = 'Listing #' . $data['car_id'];
+    }
+
+    return implode("\n", $lines);
+}
+
+/** WhatsApp URL to send lead form details to the dealership */
+function leadWhatsAppLink(array $data): string
+{
+    $config = appConfig();
+    return 'https://wa.me/' . $config['whatsapp_number'] . '?text=' . rawurlencode(leadWhatsAppMessage($data));
+}
+
 function getImageUrl(?string $filename): string
 {
     $config = appConfig();

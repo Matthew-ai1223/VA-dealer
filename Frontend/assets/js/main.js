@@ -273,6 +273,22 @@
     });
   });
 
+  // WhatsApp click tracking (Stage 2 lead capture)
+  document.querySelectorAll('.js-track-whatsapp').forEach(function (link) {
+    link.addEventListener('click', function () {
+      var carId = parseInt(link.getAttribute('data-car-id'), 10);
+      if (!carId) return;
+      var base = (window.APP_BASE || '').replace(/\/$/, '');
+      var trackUrl = (base ? base + '/' : '/') + 'Backend/api/leads.php?action=track';
+      fetch(trackUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ activity_type: 'whatsapp_click', car_id: carId }),
+        keepalive: true,
+      }).catch(function () {});
+    });
+  });
+
   // Copy car listing link to clipboard
   function showShareToast(message) {
     var toast = document.getElementById('share-toast');

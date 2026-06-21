@@ -15,9 +15,13 @@ return [
     'max_images_per_car' => 5,
     'allowed_images'   => ['image/jpeg', 'image/png', 'image/webp'],
     'cars_per_page'    => 12,
-    'session_name'     => 'va_aut_sales_admin',
+  'session_name'     => 'va_aut_sales_admin',
 
-    // Social media links (update with your real profiles)
+  // Stage 2 — lead notifications (set admin_email before going live)
+  'admin_email'      => '',
+  'mail_from'        => 'noreply@vaautosales.local',
+
+  // Social media links (update with your real profiles)
     'social' => [
         'facebook'  => 'https://facebook.com/vaautosales',
         'instagram' => 'https://instagram.com/vaautosales',

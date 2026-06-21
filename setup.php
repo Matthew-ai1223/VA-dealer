@@ -21,6 +21,18 @@ try {
         }
     }
 
+    // Stage 2 migration (leads / CRM)
+    $stage2 = __DIR__ . '/database/migrate_stage2.sql';
+    if (is_file($stage2)) {
+        $stage2Sql = file_get_contents($stage2);
+        $stage2Statements = array_filter(array_map('trim', explode(';', $stage2Sql)));
+        foreach ($stage2Statements as $statement) {
+            if (!empty($statement)) {
+                $pdo->exec($statement);
+            }
+        }
+    }
+
     // Create uploads directory
     $uploadDir = __DIR__ . '/Backend/uploads/cars';
     if (!is_dir($uploadDir)) {

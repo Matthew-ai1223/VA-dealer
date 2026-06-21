@@ -59,6 +59,10 @@
 
     <?php include __DIR__ . '/ai-chat.php'; ?>
 
+    <?php if (in_array(basename($_SERVER['PHP_SELF']), ['index.php', 'car.php', 'listings.php'], true)): ?>
+    <?php include __DIR__ . '/lead-modal.php'; ?>
+    <?php endif; ?>
+
     <?php if (in_array(basename($_SERVER['PHP_SELF']), ['index.php', 'listings.php'], true)): ?>
     <div class="image-lightbox" id="image-lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Car photo viewer">
         <button type="button" class="image-lightbox__backdrop" aria-label="Close viewer"></button>
@@ -84,8 +88,11 @@
     </div>
     <?php endif; ?>
 
-    <script src="<?= sanitize(url('Frontend/assets/js/main.js')) ?>?v=4"></script>
+    <script src="<?= sanitize(url('Frontend/assets/js/main.js')) ?>?v=5"></script>
     <script src="<?= sanitize(url('Frontend/assets/js/ai-chat.js')) ?>?v=3"></script>
+    <?php if (in_array(basename($_SERVER['PHP_SELF']), ['index.php', 'car.php', 'listings.php'], true)): ?>
+    <script src="<?= sanitize(url('Frontend/assets/js/leads.js')) ?>?v=3"></script>
+    <?php endif; ?>
     <?php if (basename($_SERVER['PHP_SELF']) === 'car.php'): ?>
     <script src="<?= sanitize(url('Frontend/assets/js/car.js')) ?>"></script>
     <?php endif; ?>
