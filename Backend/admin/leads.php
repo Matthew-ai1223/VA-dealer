@@ -16,15 +16,6 @@ $page = max(1, (int) ($_GET['page'] ?? 1));
 $result = $leadModel->getAll($filters, $page, 20);
 $overview = $leadModel->getOverviewStats();
 $sources = $leadModel->getSourceStats();
-$whatsappStats = $leadModel->getWhatsAppStats();
-
-$carTitles = [];
-foreach ($whatsappStats as $row) {
-    if (!empty($row['car_id'])) {
-        $c = $carModel->getById((int) $row['car_id'], true);
-        $carTitles[(int) $row['car_id']] = $c['title'] ?? 'Car #' . $row['car_id'];
-    }
-}
 ?>
 
 <?php if (!empty($_SESSION['flash_success'])): ?>
@@ -72,23 +63,9 @@ foreach ($whatsappStats as $row) {
             </ul>
         <?php endif; ?>
     </div>
-
-    <div class="crm-panel">
-        <h3>Top WhatsApp Inquiries</h3>
-        <?php if (empty($whatsappStats)): ?>
-            <p class="crm-empty">No WhatsApp clicks tracked yet.</p>
-        <?php else: ?>
-            <ul class="crm-source-list">
-                <?php foreach ($whatsappStats as $row): ?>
-                <li>
-                    <span class="crm-source-list__name"><?= sanitize($carTitles[(int) $row['car_id']] ?? 'Unknown') ?></span>
-                    <span class="crm-source-list__count"><?= (int) $row['clicks'] ?> clicks</span>
-                </li>
-                <?php endforeach; ?>
-            </ul>
-        <?php endif; ?>
-    </div>
 </div>
+
+<?php require __DIR__ . '/includes/vehicle-analytics.php'; ?>
 
 <div class="admin-toolbar">
     <h2>All Leads</h2>

@@ -2,8 +2,10 @@
 $pageTitle = 'Dashboard';
 require_once __DIR__ . '/includes/header.php';
 require_once __DIR__ . '/../models/Car.php';
+require_once __DIR__ . '/../models/Lead.php';
 
 $carModel = new Car();
+$leadModel = new Lead();
 $allCars = $carModel->getAll([], true);
 $available = $carModel->countAll('available');
 $sold = $carModel->countAll('sold');
@@ -34,6 +36,8 @@ $total = $carModel->countAll();
         <span class="stat-card__label">Sold</span>
     </div>
 </div>
+
+<?php require __DIR__ . '/includes/vehicle-analytics.php'; ?>
 
 <div class="admin-toolbar">
     <h2>All Listings</h2>

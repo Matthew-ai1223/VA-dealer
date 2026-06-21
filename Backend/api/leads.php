@@ -66,7 +66,7 @@ try {
     if ($method === 'POST' && $action === 'track') {
         $type = $input['activity_type'] ?? '';
         $carId = isset($input['car_id']) ? (int) $input['car_id'] : null;
-        $allowed = ['vehicle_viewed', 'whatsapp_click', 'vehicle_inquiry'];
+        $allowed = ['vehicle_viewed', 'whatsapp_click', 'interest_click', 'vehicle_inquiry'];
 
         if (!in_array($type, $allowed, true)) {
             jsonResponse(['success' => false, 'message' => 'Invalid activity type'], 400);

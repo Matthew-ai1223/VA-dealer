@@ -23,6 +23,16 @@
 
   var activeCar = { id: 0, title: '', price: '' };
 
+  function trackActivity(type, carId) {
+    if (!carId || !apiUrl) return;
+    fetch(apiUrl + '?action=track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ activity_type: type, car_id: carId }),
+      keepalive: true,
+    }).catch(function () {});
+  }
+
   function setCarFields(carId, title, price) {
     activeCar = { id: carId, title: title, price: price };
     modal.querySelectorAll('.js-lead-car-id').forEach(function (el) {
@@ -62,13 +72,12 @@
     modal.setAttribute('aria-hidden', 'false');
     document.body.classList.add('lead-modal-open');
 
-    if (carId && !sessionStorage.getItem('viewed_car_' + carId)) {
-      fetch(apiUrl + '?action=track', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ activity_type: 'vehicle_viewed', car_id: carId }),
-      }).catch(function () {});
-      sessionStorage.setItem('viewed_car_' + carId, '1');
+    if (carId) {
+      trackActivity('interest_click', carId);
+      if (!sessionStorage.getItem('viewed_car_' + carId)) {
+        trackActivity('vehicle_viewed', carId);
+        sessionStorage.setItem('viewed_car_' + carId, '1');
+      }
     }
 
     var firstInput = modal.querySelector('.lead-form:not([hidden]) input:not([type="hidden"])');
@@ -118,16 +127,18 @@
 
   if (modalWhatsapp) {
     modalWhatsapp.addEventListener('click', function () {
-      var carId = activeCar.id;
-      if (carId) {
-        fetch(apiUrl + '?action=track', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ activity_type: 'whatsapp_click', car_id: carId }),
-          keepalive: true,
-        }).catch(function () {});
-      }
+      if (activeCar.id) trackActivity('whatsapp_click', activeCar.id);
     });
+  }
+
+  // Track car detail page view (car.php)
+  var trackViewEl = document.querySelector('[data-track-car-view]');
+  if (trackViewEl) {
+    var viewCarId = parseInt(trackViewEl.getAttribute('data-track-car-view'), 10);
+    if (viewCarId && !sessionStorage.getItem('viewed_car_' + viewCarId)) {
+      trackActivity('vehicle_viewed', viewCarId);
+      sessionStorage.setItem('viewed_car_' + viewCarId, '1');
+    }
   }
 
   document.addEventListener('keydown', function (e) {

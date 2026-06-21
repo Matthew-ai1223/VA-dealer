@@ -33,6 +33,17 @@ try {
         }
     }
 
+    // Vehicle analytics (interest_click tracking)
+    $analytics = __DIR__ . '/database/migrate_vehicle_analytics.sql';
+    if (is_file($analytics)) {
+        $analyticsSql = file_get_contents($analytics);
+        foreach (array_filter(array_map('trim', explode(';', $analyticsSql))) as $statement) {
+            if ($statement !== '') {
+                $pdo->exec($statement);
+            }
+        }
+    }
+
     // Create uploads directory
     $uploadDir = __DIR__ . '/Backend/uploads/cars';
     if (!is_dir($uploadDir)) {

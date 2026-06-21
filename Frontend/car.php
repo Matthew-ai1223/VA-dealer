@@ -39,7 +39,7 @@ require __DIR__ . '/includes/header.php';
 }
 </script>
 
-<section class="car-detail reveal-on-scroll">
+<section class="car-detail reveal-on-scroll" data-track-car-view="<?= (int) $car['id'] ?>">
     <div class="container">
         <nav class="breadcrumb">
             <a href="index.php">Home</a> /

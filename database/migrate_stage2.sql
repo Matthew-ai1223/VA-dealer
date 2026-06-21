@@ -44,7 +44,8 @@ CREATE TABLE IF NOT EXISTS lead_activities (
     'contact_request',
     'inspection_request',
     'callback_request',
-    'whatsapp_click'
+    'whatsapp_click',
+    'interest_click'
   ) NOT NULL,
   meta JSON DEFAULT NULL,
   ip_address VARCHAR(45) DEFAULT NULL,

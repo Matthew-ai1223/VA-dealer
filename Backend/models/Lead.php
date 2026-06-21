@@ -186,6 +186,32 @@ class Lead
         return $stmt->fetchAll();
     }
 
+    /** Vehicles with the most detail-page / modal views */
+    public function getMostViewedVehicles(int $limit = 10): array
+    {
+        $limit = max(1, min(50, $limit));
+        $stmt = $this->db->query(
+            "SELECT car_id, COUNT(*) AS total
+             FROM lead_activities
+             WHERE activity_type = 'vehicle_viewed' AND car_id IS NOT NULL
+             GROUP BY car_id ORDER BY total DESC LIMIT {$limit}"
+        );
+        return $stmt->fetchAll();
+    }
+
+    /** Vehicles with the most interest + WhatsApp clicks */
+    public function getMostClickedVehicles(int $limit = 10): array
+    {
+        $limit = max(1, min(50, $limit));
+        $stmt = $this->db->query(
+            "SELECT car_id, COUNT(*) AS total
+             FROM lead_activities
+             WHERE activity_type IN ('interest_click', 'whatsapp_click') AND car_id IS NOT NULL
+             GROUP BY car_id ORDER BY total DESC LIMIT {$limit}"
+        );
+        return $stmt->fetchAll();
+    }
+
     public function countNewSince(?string $since = null): int
     {
         if ($since) {

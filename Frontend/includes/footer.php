@@ -96,7 +96,7 @@
     <script src="<?= sanitize(url('Frontend/assets/js/main.js')) ?>?v=5"></script>
     <script src="<?= sanitize(url('Frontend/assets/js/ai-chat.js')) ?>?v=3"></script>
     <?php if (in_array(basename($_SERVER['PHP_SELF']), ['index.php', 'car.php', 'listings.php'], true)): ?>
-    <script src="<?= sanitize(url('Frontend/assets/js/leads.js')) ?>?v=3"></script>
+    <script src="<?= sanitize(url('Frontend/assets/js/leads.js')) ?>?v=4"></script>
     <?php endif; ?>
     <?php if (basename($_SERVER['PHP_SELF']) === 'car.php'): ?>
     <script src="<?= sanitize(url('Frontend/assets/js/car.js')) ?>"></script>
