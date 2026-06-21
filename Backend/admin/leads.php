@@ -69,7 +69,61 @@ $sources = $leadModel->getSourceStats();
 
 <div class="admin-toolbar">
     <h2>All Leads</h2>
+    <div style="display: flex; gap: 10px;">
+        <button type="button" class="btn btn--outline btn--sm" id="btn-simulate-facebook" style="border-color:#3b82f6; color:#3b82f6;">Simulate Facebook Lead</button>
+        <button type="button" class="btn btn--outline btn--sm" id="btn-simulate-instagram" style="border-color:#ec4899; color:#ec4899;">Simulate Instagram Lead</button>
+    </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var fbBtn = document.getElementById('btn-simulate-facebook');
+    var igBtn = document.getElementById('btn-simulate-instagram');
+    var webhookUrl = '<?= url("Backend/api/meta-webhook.php") ?>';
+
+    function simulateLead(source) {
+        var names = ['Chidi Egwu', 'Fatima Bello', 'Olumide Johnson', 'Amara Okafor'];
+        var randomName = names[Math.floor(Math.random() * names.length)];
+        var randomPhone = '+234803' + Math.floor(1000000 + Math.random() * 9000000);
+        var randomEmail = randomName.toLowerCase().replace(' ', '.') + '@example.com';
+        
+        var vehicles = ['2022 Toyota Camry XSE', '2021 Honda Accord Sport', '2020 Mercedes-Benz C300'];
+        var randomVehicle = vehicles[Math.floor(Math.random() * vehicles.length)];
+
+        var payload = {
+            simulated: true,
+            source: source,
+            full_name: randomName + ' (Mock)',
+            phone_number: randomPhone,
+            email: randomEmail,
+            interested_vehicle: randomVehicle,
+            budget: Math.floor(12000000 + Math.random() * 8000000),
+            message: 'I would like to check availability and schedule an inspection for this car from ' + source + ' ads.'
+        };
+
+        fetch(webhookUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            if (data.success) {
+                alert('Mock lead synced from Meta Ads: #' + data.lead_id + ' (' + randomName + ')');
+                window.location.reload();
+            } else {
+                alert('Simulation failed: ' + data.message);
+            }
+        })
+        .catch(function() {
+            alert('Error calling webhook API');
+        });
+    }
+
+    if (fbBtn) fbBtn.addEventListener('click', function() { simulateLead('facebook'); });
+    if (igBtn) igBtn.addEventListener('click', function() { simulateLead('instagram'); });
+});
+</script>
 
 <form method="GET" class="crm-filters admin-form admin-form--inline">
     <div class="form-group">

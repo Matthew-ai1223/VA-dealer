@@ -9,7 +9,7 @@ class Lead
 {
     private PDO $db;
 
-    public const STATUSES = ['new', 'contacted', 'interested', 'negotiating', 'closed_won', 'closed_lost'];
+    public const STATUSES = ['new', 'contacted', 'interested', 'inspection_scheduled', 'negotiating', 'closed_won', 'closed_lost'];
     public const SOURCES = ['website', 'nairaland', 'instagram', 'facebook', 'whatsapp'];
     public const INQUIRY_TYPES = ['request_info', 'book_inspection', 'request_callback', 'whatsapp'];
 
@@ -97,7 +97,102 @@ class Lead
 
         $sql = 'UPDATE leads SET status = ?, assigned_to = COALESCE(?, assigned_to) WHERE id = ?';
         $stmt = $this->db->prepare($sql);
-        return $stmt->execute([$status, $assignedTo, $id]);
+        $success = $stmt->execute([$status, $assignedTo, $id]);
+        if ($success) {
+            $this->calculateAndStoreLeadScore($id);
+        }
+        return $success;
+    }
+
+    public function associateActivitiesToLead(int $leadId, string $ipAddress): void
+    {
+        $sql = 'UPDATE lead_activities SET lead_id = ? WHERE lead_id IS NULL AND ip_address = ?';
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$leadId, $ipAddress]);
+    }
+
+    public function calculateAndStoreLeadScore(int $leadId): array
+    {
+        $lead = $this->getById($leadId);
+        if (!$lead) {
+            return ['score' => 0, 'category' => 'cold'];
+        }
+
+        $score = 10; // Base score
+
+        $phone = $lead['phone_number'];
+        $email = $lead['email'];
+
+        // Count inquiries by phone/email
+        $inquirySql = 'SELECT COUNT(*) FROM leads WHERE phone_number = ?';
+        $inquiryParams = [$phone];
+        if ($email !== null && $email !== '') {
+            $inquirySql .= ' OR email = ?';
+            $inquiryParams[] = $email;
+        }
+        $stmt = $this->db->prepare($inquirySql);
+        $stmt->execute($inquiryParams);
+        $inquiryCount = (int) $stmt->fetchColumn();
+
+        if ($inquiryCount > 1) {
+            $score += 30; // Multiple inquiries
+        }
+
+        // Check for inspection request inquiry
+        $inspectionSql = 'SELECT COUNT(*) FROM leads WHERE (phone_number = ?' . ($email !== null && $email !== '' ? ' OR email = ?' : '') . ') AND inquiry_type = \'book_inspection\'';
+        $stmt = $this->db->prepare($inspectionSql);
+        $stmt->execute($inquiryParams);
+        $inspectionCount = (int) $stmt->fetchColumn();
+
+        if ($inspectionCount > 0) {
+            $score += 50; // Requested inspection
+        }
+
+        // Count unique cars viewed & WhatsApp clicks
+        $activitySql = 'SELECT activity_type, COUNT(DISTINCT car_id) as unique_cars, COUNT(*) as total_actions
+                        FROM lead_activities
+                        WHERE lead_id = ?
+                        GROUP BY activity_type';
+        $stmt = $this->db->prepare($activitySql);
+        $stmt->execute([$leadId]);
+        $activities = $stmt->fetchAll();
+
+        $uniqueCarsViewed = 0;
+        $hasWhatsappClick = false;
+
+        foreach ($activities as $act) {
+            if ($act['activity_type'] === 'vehicle_viewed') {
+                $uniqueCarsViewed = (int) $act['unique_cars'];
+            }
+            if ($act['activity_type'] === 'whatsapp_click') {
+                $hasWhatsappClick = true;
+            }
+        }
+
+        if ($uniqueCarsViewed > 1) {
+            $score += 25; // Viewed multiple vehicles
+        }
+        if ($hasWhatsappClick) {
+            $score += 20; // WhatsApp clicked / contacted dealership
+        }
+
+        // Cap at 100
+        $score = min(100, $score);
+
+        // Category matching
+        $category = 'cold';
+        if ($score >= 70) {
+            $category = 'hot';
+        } elseif ($score >= 30) {
+            $category = 'warm';
+        }
+
+        // Update database record
+        $updateSql = 'UPDATE leads SET lead_score = ?, lead_category = ? WHERE id = ?';
+        $stmt = $this->db->prepare($updateSql);
+        $stmt->execute([$score, $category, $leadId]);
+
+        return ['score' => $score, 'category' => $category];
     }
 
     public function addNote(int $leadId, string $adminUsername, string $note): int
@@ -231,6 +326,7 @@ class Lead
         $row['status_label'] = ucwords(str_replace('_', ' ', $row['status']));
         $row['source_label'] = ucfirst($row['source']);
         $row['inquiry_label'] = ucwords(str_replace('_', ' ', $row['inquiry_type']));
+        $row['category_label'] = ucfirst($row['lead_category'] ?? 'cold');
         return $row;
     }
 }

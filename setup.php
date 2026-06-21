@@ -44,6 +44,52 @@ try {
         }
     }
 
+    // Stage 3 migrations (visitors, campaigns, logs)
+    $stage3 = __DIR__ . '/database/migrate_stage3.sql';
+    if (is_file($stage3)) {
+        $stage3Sql = file_get_contents($stage3);
+        foreach (array_filter(array_map('trim', explode(';', $stage3Sql))) as $statement) {
+            if ($statement !== '') {
+                $pdo->exec($statement);
+            }
+        }
+    }
+
+    // Safely add Stage 3 columns to leads table if they don't exist
+    $columnsToAdd = [
+        'lead_score' => "INT DEFAULT 0",
+        'lead_category' => "ENUM('hot', 'warm', 'cold') DEFAULT 'cold'",
+        'follow_up_status' => "VARCHAR(50) DEFAULT 'pending'",
+        'follow_up_history' => "JSON DEFAULT NULL",
+        'next_follow_up_date' => "DATETIME DEFAULT NULL"
+    ];
+
+    foreach ($columnsToAdd as $colName => $colDef) {
+        $check = $pdo->query("SHOW COLUMNS FROM leads LIKE '$colName'")->fetch();
+        if (!$check) {
+            $pdo->exec("ALTER TABLE leads ADD COLUMN $colName $colDef");
+        }
+    }
+
+    // Add indexes safely
+    $indexesToAdd = [
+        'idx_lead_score' => 'lead_score',
+        'idx_lead_category' => 'lead_category',
+        'idx_follow_up_status' => 'follow_up_status'
+    ];
+
+    $existingIndexes = [];
+    $idxRows = $pdo->query("SHOW INDEX FROM leads")->fetchAll(PDO::FETCH_ASSOC);
+    foreach ($idxRows as $row) {
+        $existingIndexes[] = $row['Key_name'];
+    }
+
+    foreach ($indexesToAdd as $indexName => $colName) {
+        if (!in_array($indexName, $existingIndexes, true)) {
+            $pdo->exec("ALTER TABLE leads ADD INDEX $indexName ($colName)");
+        }
+    }
+
     // Create uploads directory
     $uploadDir = __DIR__ . '/Backend/uploads/cars';
     if (!is_dir($uploadDir)) {

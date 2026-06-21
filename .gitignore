@@ -1,7 +1,12 @@
 # Local secrets — never commit
 Backend/config/groq.local.php
 Backend/config/database.local.php
+Backend/config/mail.local.php
 .env
+
+# Composer
+vendor/
+composer.lock
 
 # Uploads (user content)
 Backend/uploads/cars/*

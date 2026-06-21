@@ -51,17 +51,46 @@ $messages = array_merge(
     $sanitized
 );
 
-$result = groqChat($messages);
+$stream = isset($_GET['stream']) && $_GET['stream'] === 'true';
 
-if (!$result['success']) {
+if ($stream) {
+    header('Content-Type: text/event-stream');
+    header('Cache-Control: no-cache');
+    header('Connection: keep-alive');
+    header('X-Accel-Buffering: no');
+
+    // Disable output buffering
+    if (ob_get_level() > 0) {
+        ob_end_clean();
+    }
+    ob_implicit_flush(true);
+
+    $result = groqChatStream($messages, function ($text) {
+        echo "data: " . json_encode(['text' => $text], JSON_UNESCAPED_UNICODE) . "\n\n";
+        if (ob_get_level() > 0) {
+            ob_flush();
+        }
+        flush();
+    });
+
+    if (!$result['success']) {
+        echo "data: " . json_encode(['error' => $result['message']], JSON_UNESCAPED_UNICODE) . "\n\n";
+    }
+    echo "data: [DONE]\n\n";
+    exit;
+} else {
+    $result = groqChat($messages);
+
+    if (!$result['success']) {
+        jsonResponse([
+            'success' => false,
+            'message' => $result['message'],
+            'fallback_whatsapp' => 'https://wa.me/' . appConfig()['whatsapp_number'],
+        ], 503);
+    }
+
     jsonResponse([
-        'success' => false,
-        'message' => $result['message'],
-        'fallback_whatsapp' => 'https://wa.me/' . appConfig()['whatsapp_number'],
-    ], 503);
+        'success' => true,
+        'reply'   => $result['reply'],
+    ]);
 }
-
-jsonResponse([
-    'success' => true,
-    'reply'   => $result['reply'],
-]);

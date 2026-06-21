@@ -93,7 +93,23 @@ try {
             }
         }
 
-        $leadModel->logActivity($type, $carId, $leadId, $input['meta'] ?? null);
+        $activityId = $leadModel->logActivity($type, $carId, $leadId, $input['meta'] ?? null);
+        if ($leadId) {
+            $leadModel->calculateAndStoreLeadScore($leadId);
+        } else {
+            // Find last lead from this IP in the last 2 hours and update their activities and score
+            try {
+                $db = Database::getConnection();
+                $ip = $_SERVER['REMOTE_ADDR'] ?? '';
+                $stmt = $db->prepare("SELECT id FROM leads WHERE created_at >= DATE_SUB(NOW(), INTERVAL 2 HOUR) AND id IN (SELECT lead_id FROM lead_activities WHERE ip_address = ? AND lead_id IS NOT NULL) ORDER BY id DESC LIMIT 1");
+                $stmt->execute([$ip]);
+                $lastLeadId = $stmt->fetchColumn();
+                if ($lastLeadId) {
+                    $db->prepare("UPDATE lead_activities SET lead_id = ? WHERE id = ?")->execute([$lastLeadId, $activityId]);
+                    $leadModel->calculateAndStoreLeadScore((int) $lastLeadId);
+                }
+            } catch (Throwable $e) {}
+        }
         jsonResponse(['success' => true, 'lead_id' => $leadId]);
     }
 
@@ -118,6 +134,22 @@ try {
         }
 
         $source = $input['source'] ?? 'website';
+        
+        // Read UTM campaign source if stored in cookie or session
+        $utmCookie = $_COOKIE['va_utm_source'] ?? null;
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        $utmSession = $_SESSION['lead_source'] ?? null;
+        $campaignSource = $utmSession ?: $utmCookie;
+        
+        if ($campaignSource !== null && $campaignSource !== '') {
+            $campaignSourceLower = strtolower(trim($campaignSource));
+            if (in_array($campaignSourceLower, Lead::SOURCES, true)) {
+                $source = $campaignSourceLower;
+            }
+        }
+
         if (!in_array($source, Lead::SOURCES, true)) {
             $source = 'website';
         }
@@ -134,8 +166,14 @@ try {
             'message'            => trim($input['message'] ?? '') ?: null,
         ]);
 
+        // Associate previous anonymous activities from this IP to the new lead
+        $leadModel->associateActivitiesToLead($leadId, $_SERVER['REMOTE_ADDR'] ?? '');
+
         $activityType = mapInquiryToActivity($inquiryType);
         $leadModel->logActivity($activityType, $carId, $leadId, ['form' => $inquiryType]);
+
+        // Calculate and save the lead score
+        $leadModel->calculateAndStoreLeadScore($leadId);
 
         $lead = $leadModel->getById($leadId);
         sendLeadNotification($lead);

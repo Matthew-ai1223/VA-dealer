@@ -112,3 +112,83 @@ Rules:
 {$inventoryContext}
 PROMPT;
 }
+
+function groqChatStream(array $messages, callable $callback): array
+{
+    $config = appConfig();
+    $groq = $config['groq'] ?? [];
+
+    if (empty($groq['enabled'])) {
+        return ['success' => false, 'message' => 'AI support is currently disabled.'];
+    }
+
+    $apiKey = trim($groq['api_key'] ?? '');
+    if ($apiKey === '') {
+        return [
+            'success' => false,
+            'message' => 'AI support is not configured yet. Please contact us on WhatsApp.',
+        ];
+    }
+
+    $payload = [
+        'model'       => $groq['model'] ?? 'llama-3.3-70b-versatile',
+        'messages'    => $messages,
+        'temperature' => 0.6,
+        'max_tokens'  => 800,
+        'stream'      => true,
+    ];
+
+    $ch = curl_init('https://api.groq.com/openai/v1/chat/completions');
+    $buffer = '';
+
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => false,
+        CURLOPT_POST           => true,
+        CURLOPT_TIMEOUT        => 60,
+        CURLOPT_HTTPHEADER     => [
+            'Authorization: Bearer ' . $apiKey,
+            'Content-Type: application/json',
+        ],
+        CURLOPT_POSTFIELDS => json_encode($payload),
+        CURLOPT_WRITEFUNCTION => function ($ch, $data) use (&$buffer, $callback) {
+            $buffer .= $data;
+            while (($pos = strpos($buffer, "\n")) !== false) {
+                $line = substr($buffer, 0, $pos);
+                $buffer = substr($buffer, $pos + 1);
+                $line = trim($line);
+
+                if ($line === '') {
+                    continue;
+                }
+
+                if (substr($line, 0, 6) === 'data: ') {
+                    $eventData = substr($line, 6);
+                    if ($eventData === '[DONE]') {
+                        break;
+                    }
+                    $json = json_decode($eventData, true);
+                    if (isset($json['choices'][0]['delta']['content'])) {
+                        $text = $json['choices'][0]['delta']['content'];
+                        $callback($text);
+                    }
+                }
+            }
+            return strlen($data);
+        }
+    ]);
+
+    $success = curl_exec($ch);
+    $httpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlError = curl_error($ch);
+    curl_close($ch);
+
+    if ($success === false) {
+        return ['success' => false, 'message' => 'Could not reach AI service: ' . $curlError];
+    }
+
+    if ($httpCode !== 200) {
+        return ['success' => false, 'message' => 'AI service returned error code ' . $httpCode];
+    }
+
+    return ['success' => true];
+}

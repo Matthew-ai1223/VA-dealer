@@ -9,7 +9,7 @@ return [
 
     'site_name'        => 'VA Auto Sales',
     'site_tagline'     => 'Premium Pre-Owned Vehicles in Nigeria',
-    'whatsapp_number'  => '2348012345678', // Update with real dealership number
+    'whatsapp_number'  => '2348110575847', // Update with real dealership number
     'uploads_path'     => __DIR__ . '/../uploads/cars',
     'max_upload_size'  => 5 * 1024 * 1024, // 5MB
     'max_images_per_car' => 5,
@@ -17,9 +17,10 @@ return [
     'cars_per_page'    => 12,
   'session_name'     => 'va_aut_sales_admin',
 
-  // Stage 2 — lead notifications (set admin_email before going live)
-  'admin_email'      => '',
-  'mail_from'        => 'noreply@vaautosales.local',
+  // Stage 2 — lead notifications
+  // ⚠ Set your real email here to receive new lead alerts:
+  'admin_email'      => 'YOUR_EMAIL@gmail.com', // ← change this
+  'mail_from'        => 'YOUR_GMAIL@gmail.com',  // ← must match mail.local.php from_email
 
   // Social media links (update with your real profiles)
     'social' => [

@@ -96,30 +96,80 @@
     setLoading(true);
     showTyping();
 
-    fetch(API_URL, {
+    var fetchUrl = API_URL + (API_URL.indexOf('?') === -1 ? '?stream=true' : '&stream=true');
+
+    fetch(fetchUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ messages: conversation }),
     })
-      .then(function (res) { return res.json(); })
-      .then(function (data) {
+      .then(function (response) {
         hideTyping();
-        if (data.success && data.reply) {
-          appendMessage('assistant', data.reply);
-          conversation.push({ role: 'assistant', content: data.reply });
-        } else {
-          var fallback = data.message || 'Sorry, I could not respond right now.';
-          if (data.fallback_whatsapp) {
-            fallback += ' You can reach us on WhatsApp instead.';
-          }
-          appendMessage('assistant', fallback);
+        if (!response.ok) {
+          throw new Error('Network response error');
         }
+        var reader = response.body.getReader();
+        var decoder = new TextDecoder('utf-8');
+        var accumulated = '';
+        var botReply = '';
+
+        // Create the bot message bubble in the DOM first
+        var wrap = document.createElement('div');
+        wrap.className = 'ai-chat__msg ai-chat__msg--bot';
+        var bubble = document.createElement('div');
+        bubble.className = 'ai-chat__bubble';
+        wrap.appendChild(bubble);
+        messagesEl.appendChild(wrap);
+        scrollToBottom();
+
+        function read() {
+          return reader.read().then(function (result) {
+            if (result.done) {
+              if (!botReply) {
+                bubble.textContent = 'Sorry, I could not respond right now.';
+              } else {
+                conversation.push({ role: 'assistant', content: botReply });
+              }
+              setLoading(false);
+              input.focus();
+              return;
+            }
+
+            accumulated += decoder.decode(result.value, { stream: true });
+            var lines = accumulated.split('\n');
+            accumulated = lines.pop(); // keep last partial line in buffer
+
+            for (var i = 0; i < lines.length; i++) {
+              var line = lines[i].trim();
+              if (line === '') continue;
+              if (line === 'data: [DONE]') {
+                continue;
+              }
+              if (line.indexOf('data: ') === 0) {
+                try {
+                  var data = JSON.parse(line.substring(6));
+                  if (data.text) {
+                    botReply += data.text;
+                    bubble.textContent = botReply;
+                    scrollToBottom();
+                  } else if (data.error) {
+                    botReply += ' [Error: ' + data.error + ']';
+                    bubble.textContent = botReply;
+                    scrollToBottom();
+                  }
+                } catch (e) {
+                  // ignore JSON parse errors of incomplete chunks
+                }
+              }
+            }
+            return read();
+          });
+        }
+        return read();
       })
       .catch(function () {
         hideTyping();
         appendMessage('assistant', 'Connection error. Please try again or contact us on WhatsApp.');
-      })
-      .finally(function () {
         setLoading(false);
         input.focus();
       });
