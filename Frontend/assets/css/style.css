@@ -142,7 +142,20 @@ a:hover { color: var(--color-primary-dark); }
   font-size: 1.125rem;
   color: var(--color-text);
 }
-.site-header__logo:hover { color: var(--color-text); }
+.site-header__logo:hover { color: var(--color-text); opacity: 0.92; }
+
+.site-logo-img {
+  height: 44px;
+  width: auto;
+  max-width: min(200px, 48vw);
+  display: block;
+  object-fit: contain;
+}
+
+.site-logo-img--footer {
+  height: 40px;
+  max-width: 180px;
+}
 
 .logo-mark {
   background: var(--color-primary);

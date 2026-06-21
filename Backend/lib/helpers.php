@@ -93,6 +93,8 @@ function appConfig(): array
         $config['base_path']   = basePath();
         $config['site_url']    = fullUrl();
         $config['uploads_url'] = url('Backend/uploads/cars');
+        $config['logo_url']      = url('Frontend/assets/images/log.jpg');
+        $config['logo_full_url'] = fullUrl('Frontend/assets/images/log.jpg');
     }
     return $config;
 }

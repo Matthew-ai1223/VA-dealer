@@ -3,8 +3,13 @@
         <div class="container site-footer__grid">
             <div class="site-footer__brand">
                 <div class="site-footer__logo">
-                    <span class="logo-mark">VA</span>
-                    <strong><?= sanitize($config['site_name']) ?></strong>
+                    <img
+                        src="<?= sanitize($config['logo_url'] ?? url('Frontend/assets/images/log.jpg')) ?>"
+                        alt="<?= sanitize($config['site_name']) ?>"
+                        class="site-logo-img site-logo-img--footer"
+                        width="160"
+                        height="40"
+                    >
                 </div>
                 <p><?= sanitize($config['site_tagline']) ?></p>
                 <p class="site-footer__desc">Quality pre-owned vehicles with transparent pricing. Visit us or chat with our AI assistant anytime.</p>

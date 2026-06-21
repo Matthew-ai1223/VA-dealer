@@ -21,8 +21,25 @@
   font-weight: 800;
   font-size: 1.0625rem;
   color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 .admin-header__brand:hover { color: #93c5fd; }
+
+.admin-header__logo {
+  height: 36px;
+  width: auto;
+  max-width: 140px;
+  object-fit: contain;
+  display: block;
+}
+
+.admin-header__brand span {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.75);
+}
 
 .admin-nav {
   display: flex;

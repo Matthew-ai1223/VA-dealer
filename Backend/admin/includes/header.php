@@ -12,13 +12,17 @@ $adminUsername = $_SESSION['admin_username'] ?? 'Admin';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= sanitize($pageTitle ?? 'Admin') ?> | <?= sanitize($config['site_name']) ?></title>
+    <link rel="icon" href="<?= sanitize($config['logo_url'] ?? url('Frontend/assets/images/log.jpg')) ?>" type="image/jpeg">
     <link rel="stylesheet" href="<?= sanitize(url('Frontend/assets/css/style.css')) ?>">
     <link rel="stylesheet" href="<?= sanitize(url('Backend/admin/assets/admin.css')) ?>">
 </head>
 <body class="admin-body">
     <header class="admin-header">
         <div class="container admin-header__inner">
-            <a href="dashboard.php" class="admin-header__brand"><?= sanitize($config['site_name']) ?> Admin</a>
+            <a href="dashboard.php" class="admin-header__brand">
+                <img src="<?= sanitize($config['logo_url'] ?? url('Frontend/assets/images/log.jpg')) ?>" alt="<?= sanitize($config['site_name']) ?>" class="admin-header__logo" height="36">
+                <span>Admin</span>
+            </a>
             <nav class="admin-nav">
                 <a href="dashboard.php">Dashboard</a>
                 <a href="leads.php">Leads<?php
