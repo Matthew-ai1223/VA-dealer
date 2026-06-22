@@ -10,6 +10,7 @@
     # Clean public URLs (optional shortcuts)
     RewriteRule ^cars/?$ Frontend/listings.php [L,QSA]
     RewriteRule ^car/([0-9]+)/?$ Frontend/car.php?id=$1 [L,QSA]
+    RewriteRule ^sitemap\.xml$ sitemap.php [L]
 
     # Serve real files and directories as-is
     RewriteCond %{REQUEST_FILENAME} -f [OR]

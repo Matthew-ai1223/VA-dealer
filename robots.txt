@@ -1,0 +1,10 @@
+User-agent: *
+Disallow: /Backend/admin/
+Disallow: /Backend/api/
+Disallow: /Backend/config/
+Disallow: /Backend/lib/
+Disallow: /Backend/models/
+Disallow: /Backend/uploads/
+
+# Dynamic XML Sitemap (Update localhost to your production domain name upon deployment)
+Sitemap: http://localhost/VA_AUT_SALES/sitemap.xml

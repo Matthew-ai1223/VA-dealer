@@ -3,9 +3,26 @@ if (!isset($config)) {
     require_once __DIR__ . '/../../Backend/lib/helpers.php';
     $config = appConfig();
 }
-$pageTitle = $pageTitle ?? $config['site_name'];
+
+$currentPage = basename($_SERVER['PHP_SELF']);
+
+// Clean canonical URLs
+if ($currentPage === 'index.php') {
+    $canonical = $canonical ?? fullUrl('');
+} elseif ($currentPage === 'listings.php') {
+    $canonical = $canonical ?? fullUrl('cars');
+} else {
+    $canonical = $canonical ?? fullUrl('Frontend/' . $currentPage);
+}
+
+// Enhance page titles with site name if needed
+if ($currentPage === 'index.php') {
+    $pageTitle = $config['site_name'] . ' | ' . $config['site_tagline'];
+} else {
+    $pageTitle = $pageTitle ?? $config['site_name'];
+}
+
 $pageDescription = $pageDescription ?? $config['site_tagline'];
-$canonical = $canonical ?? fullUrl('Frontend/' . basename($_SERVER['PHP_SELF']));
 $ogImage = $ogImage ?? ($config['logo_full_url'] ?? fullUrl('Frontend/assets/images/log.jpg'));
 $ogImageAlt = $ogImageAlt ?? ($config['site_name'] . ' — Premium Pre-Owned Vehicles');
 ?>
@@ -34,6 +51,82 @@ $ogImageAlt = $ogImageAlt ?? ($config['site_name'] . ' — Premium Pre-Owned Veh
     <meta name="twitter:description" content="<?= sanitize($pageDescription) ?>">
     <meta name="twitter:image" content="<?= sanitize($ogImage) ?>">
     <meta name="twitter:image:alt" content="<?= sanitize($ogImageAlt) ?>">
+
+    <!-- Structured Data / JSON-LD Schema Markup -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": <?= json_encode($config['site_name']) ?>,
+      "url": <?= json_encode(fullUrl('')) ?>,
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": <?= json_encode(fullUrl('cars?search={search_term_string}')) ?>,
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
+    <?php if ($currentPage === 'index.php'): ?>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "AutoDealer",
+      "name": <?= json_encode($config['site_name']) ?>,
+      "image": <?= json_encode($ogImage) ?>,
+      "@id": <?= json_encode(fullUrl('#dealer')) ?>,
+      "url": <?= json_encode(fullUrl('')) ?>,
+      "telephone": <?= json_encode('+' . ($config['whatsapp_number'] ?? '')) ?>,
+      "priceRange": "₦₦₦",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Abuja",
+        "addressRegion": "FCT",
+        "addressCountry": "NG"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 9.072264,
+        "longitude": 7.491302
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+          "opens": "08:00",
+          "closes": "18:00"
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": "Saturday",
+          "opens": "09:00",
+          "closes": "17:00"
+        }
+      ],
+      "sameAs": <?= json_encode(array_values(array_filter($config['social'] ?? []))) ?>
+    }
+    </script>
+    <?php endif; ?>
+
+    <?php if ($currentPage === 'listings.php' && !empty($cars)): ?>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": "Available Vehicle Showroom",
+      "numberOfItems": <?= count($cars) ?>,
+      "itemListElement": [
+        <?php foreach (array_values($cars) as $idx => $carItem): ?>
+        {
+          "@type": "ListItem",
+          "position": <?= $idx + 1 ?>,
+          "url": <?= json_encode(carShareUrl((int)$carItem['id'])) ?>
+        }<?= $idx < count($cars) - 1 ? ',' : '' ?>
+        <?php endforeach; ?>
+      ]
+    }
+    </script>
+    <?php endif; ?>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
