@@ -61,6 +61,23 @@ function url(string $path = ''): string
 /** Build a full absolute URL including scheme and host */
 function fullUrl(string $path = ''): string
 {
+    // Check if we have a site URL override configured to support production domains globally
+    static $siteUrlOverride = -1;
+    if ($siteUrlOverride === -1) {
+        $configFile = __DIR__ . '/../config/app.php';
+        if (is_file($configFile)) {
+            $cfg = require $configFile;
+            $siteUrlOverride = isset($cfg['site_url_override']) ? trim((string)$cfg['site_url_override'], '/') : null;
+        } else {
+            $siteUrlOverride = null;
+        }
+    }
+
+    if ($siteUrlOverride !== null) {
+        $path = ltrim(str_replace('\\', '/', $path), '/');
+        return $path === '' ? $siteUrlOverride : $siteUrlOverride . '/' . $path;
+    }
+
     $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
     $relative = url($path);
@@ -201,6 +218,23 @@ function getImageUrl(?string $filename): string
     }
 
     return $config['uploads_url'] . '/' . rawurlencode($filename);
+}
+
+function getFullImageUrl(?string $filename): string
+{
+    $config = appConfig();
+    $placeholder = fullUrl('Frontend/assets/images/car-placeholder.svg');
+
+    if (empty($filename)) {
+        return $placeholder;
+    }
+
+    $path = $config['uploads_path'] . '/' . $filename;
+    if (!is_file($path)) {
+        return $placeholder;
+    }
+
+    return fullUrl('Backend/uploads/cars/' . rawurlencode($filename));
 }
 
 function parseJsonField(?string $json, array $default = []): array

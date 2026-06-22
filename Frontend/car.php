@@ -18,6 +18,9 @@ if (!$car) {
 
 $pageTitle = sanitize($car['title']) . ' | ' . $config['site_name'];
 $pageDescription = mb_substr(strip_tags($car['description'] ?? ''), 0, 160);
+$canonical = carShareUrl((int) $car['id']);
+$ogImage = !empty($car['images'][0]) ? getFullImageUrl($car['images'][0]) : null;
+$ogImageAlt = sanitize($car['title']) . ' for Sale — VA Auto Sales';
 $specs = $car['specs'] ?? [];
 require __DIR__ . '/includes/header.php';
 ?>
@@ -27,14 +30,43 @@ require __DIR__ . '/includes/header.php';
   "@context": "https://schema.org",
   "@type": "Vehicle",
   "name": <?= json_encode($car['title']) ?>,
+  "description": <?= json_encode(mb_substr(strip_tags($car['description'] ?? ''), 0, 500)) ?>,
+  "url": <?= json_encode(carShareUrl((int) $car['id'])) ?>,
+  "image": <?= json_encode(!empty($car['images'][0]) ? getFullImageUrl($car['images'][0]) : getFullImageUrl(null)) ?>,
   "brand": { "@type": "Brand", "name": <?= json_encode($car['brand']) ?> },
   "model": <?= json_encode($car['model']) ?>,
   "vehicleModelDate": <?= json_encode((string) $car['year']) ?>,
+  <?php if (!empty($car['specs']['color'])): ?>
+  "color": <?= json_encode($car['specs']['color']) ?>,
+  <?php endif; ?>
+  <?php if (!empty($car['specs']['mileage'])): ?>
+  "mileageFromOdometer": {
+    "@type": "QuantitativeValue",
+    "value": <?= json_encode($car['specs']['mileage']) ?>
+  },
+  <?php endif; ?>
+  <?php if (!empty($car['specs']['fuel'])): ?>
+  "fuelType": <?= json_encode($car['specs']['fuel']) ?>,
+  <?php endif; ?>
+  <?php if (!empty($car['specs']['transmission'])): ?>
+  "vehicleTransmission": <?= json_encode($car['specs']['transmission']) ?>,
+  <?php endif; ?>
+  "seller": {
+    "@type": "AutoDealer",
+    "name": <?= json_encode($config['site_name']) ?>,
+    "url": <?= json_encode(fullUrl('')) ?>,
+    "telephone": <?= json_encode('+' . ($config['whatsapp_number'] ?? '')) ?>
+  },
   "offers": {
     "@type": "Offer",
     "price": <?= json_encode((string) $car['price']) ?>,
     "priceCurrency": "NGN",
-    "availability": "https://schema.org/InStock"
+    "availability": "https://schema.org/InStock",
+    "url": <?= json_encode(carShareUrl((int) $car['id'])) ?>,
+    "seller": {
+      "@type": "AutoDealer",
+      "name": <?= json_encode($config['site_name']) ?>
+    }
   }
 }
 </script>

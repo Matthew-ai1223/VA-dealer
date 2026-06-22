@@ -25,6 +25,18 @@ if ($currentPage === 'index.php') {
 $pageDescription = $pageDescription ?? $config['site_tagline'];
 $ogImage = $ogImage ?? ($config['logo_full_url'] ?? fullUrl('Frontend/assets/images/log.jpg'));
 $ogImageAlt = $ogImageAlt ?? ($config['site_name'] . ' — Premium Pre-Owned Vehicles');
+
+// Dynamic og:type — 'product' for car listings, 'website' for all other pages
+$ogType = ($currentPage === 'car.php') ? 'product' : 'website';
+
+// Dynamic og:image MIME type — derived from file extension
+$_ogExt = strtolower(pathinfo(parse_url($ogImage, PHP_URL_PATH), PATHINFO_EXTENSION));
+$ogImageType = match($_ogExt) {
+    'png'  => 'image/png',
+    'webp' => 'image/webp',
+    'gif'  => 'image/gif',
+    default => 'image/jpeg',
+};
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -37,14 +49,16 @@ $ogImageAlt = $ogImageAlt ?? ($config['site_name'] . ' — Premium Pre-Owned Veh
     <link rel="canonical" href="<?= sanitize($canonical) ?>">
 
     <!-- Open Graph -->
-    <meta property="og:type" content="website">
+    <meta property="og:type" content="<?= $ogType ?>">
     <meta property="og:title" content="<?= sanitize($pageTitle) ?>">
     <meta property="og:description" content="<?= sanitize($pageDescription) ?>">
     <meta property="og:url" content="<?= sanitize($canonical) ?>">
     <meta property="og:site_name" content="<?= sanitize($config['site_name']) ?>">
     <meta property="og:image" content="<?= sanitize($ogImage) ?>">
     <meta property="og:image:secure_url" content="<?= sanitize($ogImage) ?>">
-    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:type" content="<?= $ogImageType ?>">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta property="og:image:alt" content="<?= sanitize($ogImageAlt) ?>">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="<?= sanitize($pageTitle) ?>">

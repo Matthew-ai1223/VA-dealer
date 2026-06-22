@@ -7,6 +7,9 @@ return [
     // Set to '' when deployed at domain root (InfinityFree htdocs). null = auto-detect.
     'base_path_override' => null,
 
+    // Production Domain URL configuration
+    'site_url_override'  => 'https://vautosales.com',
+
     'site_name'        => 'VA Auto Sales',
     'site_tagline'     => 'Premium Pre-Owned Vehicles in Nigeria',
     'whatsapp_number'  => '2348110575847', // Update with real dealership number
