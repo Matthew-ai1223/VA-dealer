@@ -243,11 +243,11 @@ require __DIR__ . '/includes/header.php';
                             </li>
                             <li>
                                 <span>Saturday</span>
-                                <span>9:00 AM – 5:00 PM</span>
+                                <span>9:00 AM – 6:00 PM</span>
                             </li>
                             <li>
                                 <span>Sunday</span>
-                                <span class="location-hours__closed">Closed</span>
+                                <span>By Appointment only</span>
                             </li>
                         </ul>
                     </div>

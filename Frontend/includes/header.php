@@ -114,7 +114,7 @@ $ogImageType = match($_ogExt) {
           "@type": "OpeningHoursSpecification",
           "dayOfWeek": "Saturday",
           "opens": "09:00",
-          "closes": "17:00"
+          "closes": "18:00"
         }
       ],
       "sameAs": <?= json_encode(array_values(array_filter($config['social'] ?? []))) ?>
