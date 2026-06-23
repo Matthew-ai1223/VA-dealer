@@ -34,7 +34,7 @@ $adminUsername = $_SESSION['admin_username'] ?? 'Admin';
                         if ($newCount > 0) echo ' <span class="admin-nav__badge">' . (int) $newCount . '</span>';
                     } catch (Throwable $e) { /* tables may not exist yet */ }
                 ?></a>
-                <a href="add-car.php">Add Car</a>
+                <a href="cars.php">Cars</a>
                 <a href="<?= sanitize(url('Frontend/index.php')) ?>" target="_blank">View Site</a>
                 <span class="admin-nav__user"><?= sanitize($adminUsername) ?></span>
                 <a href="logout.php" class="btn btn--sm btn--outline">Logout</a>

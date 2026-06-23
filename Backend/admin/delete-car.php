@@ -24,5 +24,5 @@ if ($deleted) {
     $_SESSION['flash_success'] = 'Car deleted successfully.';
 }
 
-header('Location: dashboard.php');
+header('Location: cars.php');
 exit;

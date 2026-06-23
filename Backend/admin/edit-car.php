@@ -9,7 +9,7 @@ $car = $carModel->getById($id, true);
 
 if (!$car) {
     echo '<div class="alert alert--error">Car not found.</div>';
-    echo '<a href="dashboard.php" class="btn btn--outline">Back to Dashboard</a>';
+    echo '<a href="cars.php" class="btn btn--outline">Back to Listings</a>';
     require_once __DIR__ . '/includes/footer.php';
     exit;
 }
@@ -17,7 +17,7 @@ if (!$car) {
 
 <div class="admin-toolbar">
     <h2>Edit Car</h2>
-    <a href="dashboard.php" class="btn btn--outline">&larr; Back to Dashboard</a>
+    <a href="cars.php" class="btn btn--outline">&larr; Back to Listings</a>
 </div>
 
 <form method="POST" action="save-car.php" enctype="multipart/form-data" class="admin-form admin-form--wide">
@@ -25,7 +25,7 @@ if (!$car) {
     <?php include __DIR__ . '/includes/car-form-fields.php'; ?>
     <div class="form-actions">
         <button type="submit" class="btn btn--primary">Update Car</button>
-        <a href="dashboard.php" class="btn btn--outline">Cancel</a>
+        <a href="cars.php" class="btn btn--outline">Cancel</a>
     </div>
 </form>
 

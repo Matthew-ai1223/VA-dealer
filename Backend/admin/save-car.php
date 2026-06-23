@@ -62,5 +62,5 @@ if (!empty($uploadResult['errors'])) {
 
 $_SESSION['flash_success'] = $message;
 
-header('Location: dashboard.php');
+header('Location: cars.php');
 exit;
