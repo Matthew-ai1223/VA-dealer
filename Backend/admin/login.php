@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../lib/helpers.php';
 require_once __DIR__ . '/../lib/auth.php';
+require_once __DIR__ . '/../lib/firewall.php';
 
 if (isAdminLoggedIn()) {
     header('Location: dashboard.php');
@@ -18,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
     $error = 'Invalid username or password';
+    reportFailedLogin(); // Track brute-force attempts
 }
 
 $config = appConfig();

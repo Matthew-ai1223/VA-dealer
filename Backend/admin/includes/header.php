@@ -35,6 +35,17 @@ $adminUsername = $_SESSION['admin_username'] ?? 'Admin';
                     } catch (Throwable $e) { /* tables may not exist yet */ }
                 ?></a>
                 <a href="cars.php">Cars</a>
+                <a href="health.php" style="display:inline-flex;align-items:center;gap:5px">
+                    🛡️ Security
+                    <?php
+                    try {
+                        $fwEvt24h = (int) Database::getConnection()
+                            ->query("SELECT COUNT(*) FROM security_events WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)")
+                            ->fetchColumn();
+                        if ($fwEvt24h > 0) echo '<span class="admin-nav__badge" style="background:#ef4444">' . $fwEvt24h . '</span>';
+                    } catch (Throwable $e) { /* tables may not exist yet */ }
+                    ?>
+                </a>
                 <a href="<?= sanitize(url('Frontend/index.php')) ?>" target="_blank">View Site</a>
                 <span class="admin-nav__user"><?= sanitize($adminUsername) ?></span>
                 <a href="logout.php" class="btn btn--sm btn--outline">Logout</a>

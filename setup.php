@@ -55,6 +55,17 @@ try {
         }
     }
 
+    // Firewall & security events migration
+    $firewallMigrate = __DIR__ . '/database/migrate_firewall.sql';
+    if (is_file($firewallMigrate)) {
+        $firewallSql = file_get_contents($firewallMigrate);
+        foreach (array_filter(array_map('trim', explode(';', $firewallSql))) as $statement) {
+            if ($statement !== '') {
+                $pdo->exec($statement);
+            }
+        }
+    }
+
     // Safely add Stage 3 columns to leads table if they don't exist
     $columnsToAdd = [
         'lead_score' => "INT DEFAULT 0",
