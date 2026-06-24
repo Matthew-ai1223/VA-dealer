@@ -102,5 +102,19 @@
     <?php if (basename($_SERVER['PHP_SELF']) === 'car.php'): ?>
     <script src="<?= sanitize(url('Frontend/assets/js/car.js')) ?>"></script>
     <?php endif; ?>
+    <!-- PWA Service Worker Registration -->
+    <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('<?= sanitize(url("sw.js")) ?>', { scope: '<?= sanitize(url("")) ?>' })
+                .then(reg => {
+                    console.log('PWA ServiceWorker registered successfully for scope:', reg.scope);
+                })
+                .catch(err => {
+                    console.error('PWA ServiceWorker registration failed:', err);
+                });
+        });
+    }
+    </script>
 </body>
 </html>

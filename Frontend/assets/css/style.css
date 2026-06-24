@@ -40,6 +40,7 @@ body {
   color: var(--color-text);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 img { max-width: 100%; height: auto; display: block; }
@@ -120,6 +121,7 @@ a:hover { color: var(--color-primary-dark); }
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   transition: box-shadow var(--transition), background var(--transition);
+  padding-top: env(safe-area-inset-top, 0px);
 }
 
 .site-header.is-scrolled {
@@ -2047,7 +2049,7 @@ body.ai-chat-open { overflow: hidden; }
   .filter-mobile-bar {
     display: block;
     position: sticky;
-    top: 72px;
+    top: calc(72px + env(safe-area-inset-top, 0px));
     z-index: 50;
     background: var(--color-bg);
     padding: 12px 0;
@@ -2074,7 +2076,7 @@ body.ai-chat-open { overflow: hidden; }
   .filter-wrap--home .filter-mobile-bar {
     display: block;
     position: sticky;
-    top: 72px;
+    top: calc(72px + env(safe-area-inset-top, 0px));
     z-index: 50;
     background: var(--color-bg);
     padding: 4px 0 8px;
@@ -2116,7 +2118,7 @@ body.ai-chat-open { overflow: hidden; }
 
   .site-nav {
     position: fixed;
-    top: 72px;
+    top: calc(72px + env(safe-area-inset-top, 0px));
     left: 0;
     right: 0;
     background: var(--color-surface);
@@ -2170,7 +2172,7 @@ body.ai-chat-open { overflow: hidden; }
   }
 
   .filter-mobile-bar {
-    top: 72px;
+    top: calc(72px + env(safe-area-inset-top, 0px));
   }
 
   .car-grid { grid-template-columns: 1fr; }

@@ -42,7 +42,7 @@ $ogImageType = match($_ogExt) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title><?= sanitize($pageTitle) ?></title>
     <meta name="description" content="<?= sanitize($pageDescription) ?>">
     <meta name="robots" content="index, follow">
@@ -147,7 +147,38 @@ $ogImageType = match($_ogExt) {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?= sanitize(url('Frontend/assets/css/style.css')) ?>?v=8">
     <link rel="icon" href="<?= sanitize($config['logo_url'] ?? url('Frontend/assets/images/log.jpg')) ?>" type="image/jpeg">
-    <link rel="apple-touch-icon" href="<?= sanitize($config['logo_url'] ?? url('Frontend/assets/images/log.jpg')) ?>">
+    
+    <!-- PWA Manifest & App Config -->
+    <link rel="manifest" href="<?= sanitize(url('manifest.json')) ?>">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="<?= sanitize($config['site_name']) ?>">
+    <meta name="theme-color" content="#1e40af">
+
+    <!-- Apple Touch Icon -->
+    <link rel="apple-touch-icon" href="<?= sanitize(url('Frontend/assets/images/apple-touch-icon.png')) ?>">
+
+    <!-- iOS Launch Splash Screens -->
+    <!-- iPhone 15 Pro Max / 14 Pro Max -->
+    <link rel="apple-touch-startup-image" href="<?= sanitize(url('Frontend/assets/images/splash/apple-splash-1290-2796.png')) ?>" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+    <!-- iPhone 15 Pro / 15 / 14 Pro -->
+    <link rel="apple-touch-startup-image" href="<?= sanitize(url('Frontend/assets/images/splash/apple-splash-1179-2556.png')) ?>" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+    <!-- iPhone 14 Plus / 13 Pro Max / 12 Pro Max -->
+    <link rel="apple-touch-startup-image" href="<?= sanitize(url('Frontend/assets/images/splash/apple-splash-1284-2778.png')) ?>" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+    <!-- iPhone 14 / 13 Pro / 13 / 12 Pro / 12 -->
+    <link rel="apple-touch-startup-image" href="<?= sanitize(url('Frontend/assets/images/splash/apple-splash-1170-2532.png')) ?>" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+    <!-- iPhone X / XS / 11 Pro -->
+    <link rel="apple-touch-startup-image" href="<?= sanitize(url('Frontend/assets/images/splash/apple-splash-1125-2436.png')) ?>" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+    <!-- iPhone XS Max / 11 Pro Max -->
+    <link rel="apple-touch-startup-image" href="<?= sanitize(url('Frontend/assets/images/splash/apple-splash-1242-2688.png')) ?>" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+    <!-- iPhone XR / 11 -->
+    <link rel="apple-touch-startup-image" href="<?= sanitize(url('Frontend/assets/images/splash/apple-splash-828-1792.png')) ?>" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+    <!-- iPhone 8 Plus / 7 Plus / 6s Plus -->
+    <link rel="apple-touch-startup-image" href="<?= sanitize(url('Frontend/assets/images/splash/apple-splash-1242-2208.png')) ?>" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+    <!-- iPhone 8 / 7 / 6s / SE (2nd gen) -->
+    <link rel="apple-touch-startup-image" href="<?= sanitize(url('Frontend/assets/images/splash/apple-splash-750-1334.png')) ?>" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+
     <script>window.APP_BASE = <?= json_encode(basePath(), JSON_UNESCAPED_SLASHES) ?>;</script>
 </head>
 <body>

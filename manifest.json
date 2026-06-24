@@ -1,0 +1,56 @@
+{
+  "name": "VA Auto Sales",
+  "short_name": "VA Auto",
+  "description": "Premium Pre-Owned Vehicles in Nigeria",
+  "start_url": "Frontend/index.php",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f8fafc",
+  "theme_color": "#1e40af",
+  "id": "/va-auto-sales-pwa",
+  "categories": ["shopping", "utilities"],
+  "icons": [
+    {
+      "src": "Frontend/assets/images/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "Frontend/assets/images/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "Frontend/assets/images/icon-192-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "Frontend/assets/images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "Frontend/assets/images/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Browse Cars",
+      "short_name": "Browse",
+      "description": "View all available pre-owned vehicles",
+      "url": "Frontend/listings.php",
+      "icons": [
+        {
+          "src": "Frontend/assets/images/favicon.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
+    }
+  ]
+}
