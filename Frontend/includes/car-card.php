@@ -21,12 +21,12 @@ $shareUrl = carShareUrl((int) $car['id']);
                 data-index="<?= (int) $index ?>"
                 aria-label="View image <?= $index + 1 ?> of <?= $imageCount ?> for <?= sanitize($car['title']) ?>"
             >
-                <img src="<?= sanitize($url) ?>" alt="<?= sanitize($car['title']) ?> — photo <?= $index + 1 ?>" loading="lazy">
+                <img src="<?= sanitize($url) ?>" alt="<?= sanitize($car['title']) ?> — photo <?= $index + 1 ?>" loading="lazy" decoding="async">
             </button>
             <?php endforeach; ?>
         <?php else: ?>
             <button type="button" class="car-card__thumb car-card__thumb--solo" data-index="0" aria-label="View placeholder">
-                <img src="<?= sanitize(getImageUrl(null)) ?>" alt="<?= sanitize($car['title']) ?>" loading="lazy">
+                <img src="<?= sanitize(getImageUrl(null)) ?>" alt="<?= sanitize($car['title']) ?>" loading="lazy" decoding="async">
             </button>
         <?php endif; ?>
         <span class="car-card__year"><?= (int) $car['year'] ?></span>

@@ -144,8 +144,13 @@ $ogImageType = match($_ogExt) {
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<?= sanitize(url('Frontend/assets/css/style.css')) ?>?v=8">
+    <!-- Non-blocking font load: won't delay first render -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" onload="this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"></noscript>
+    <!-- Preload critical assets -->
+    <link rel="preload" as="image" href="<?= sanitize(url('Frontend/assets/images/hero/bg.jpg')) ?>" fetchpriority="high">
+    <link rel="preload" as="image" href="<?= sanitize($config['logo_url'] ?? url('Frontend/assets/images/log.jpg')) ?>">
+    <link rel="stylesheet" href="<?= sanitize(url('Frontend/assets/css/style.css')) ?>?v=9">
     <link rel="icon" href="<?= sanitize($config['logo_url'] ?? url('Frontend/assets/images/log.jpg')) ?>" type="image/jpeg">
     
     <!-- PWA Manifest & App Config -->
@@ -199,7 +204,6 @@ $ogImageType = match($_ogExt) {
             <nav class="site-nav" id="site-nav">
                 <a href="<?= sanitize(url('Frontend/index.php')) ?>" class="<?= basename($_SERVER['PHP_SELF']) === 'index.php' ? 'active' : '' ?>">Home</a>
                 <a href="<?= sanitize(url('Frontend/listings.php')) ?>" class="<?= basename($_SERVER['PHP_SELF']) === 'listings.php' ? 'active' : '' ?>">Browse Cars</a>
-                <a href="<?= sanitize(url('Backend/admin/login.php')) ?>" class="nav-admin">Admin</a>
             </nav>
         </div>
     </header>

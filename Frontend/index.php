@@ -10,6 +10,12 @@ require_once __DIR__ . '/includes/hero-carousel.php';
 $heroSlides = getHeroCarouselSlides($carModel, $featuredCars);
 $pageTitle = $config['site_name'] . ' - ' . $config['site_tagline'];
 $pageDescription = 'Browse premium pre-owned cars at ' . $config['site_name'] . '. Quality vehicles with transparent pricing. Contact us on WhatsApp today.';
+
+// Browser-side cache: 5 minutes on index (no user-specific content)
+if (!headers_sent()) {
+    header('Cache-Control: public, max-age=300, stale-while-revalidate=60');
+    header('Vary: Accept-Encoding');
+}
 require __DIR__ . '/includes/header.php';
 ?>
 
@@ -33,6 +39,7 @@ require __DIR__ . '/includes/header.php';
                             src="<?= sanitize($slide['image']) ?>"
                             alt="<?= sanitize($slide['title']) ?>"
                             loading="<?= $index === 0 ? 'eager' : 'lazy' ?>"
+                            <?= $index === 0 ? 'fetchpriority="high"' : 'decoding="async"' ?>
                             class="hero-carousel__img"
                         >
                         <div class="hero-carousel__overlay"></div>
@@ -142,7 +149,26 @@ require __DIR__ . '/includes/header.php';
                 <a href="listings.php" class="btn btn--primary">Browse All Cars</a>
             </div>
         <?php else: ?>
-            <div class="car-grid">
+            <!-- Skeleton placeholders: shown instantly, hidden once real cards render -->
+            <div id="skeleton-grid-featured" aria-hidden="true" aria-label="Loading featured cars">
+                <?php $skCount = min(count($featuredCars), 6); for ($i = 0; $i < $skCount; $i++): ?>
+                <div class="car-card--skeleton">
+                    <div class="sk-image"></div>
+                    <div class="sk-body">
+                        <div class="sk-title skeleton"></div>
+                        <div class="sk-meta skeleton"></div>
+                        <div class="sk-price skeleton"></div>
+                    </div>
+                    <div class="sk-footer">
+                        <div class="sk-btn skeleton"></div>
+                        <div class="sk-btn skeleton"></div>
+                        <div class="sk-btn skeleton"></div>
+                    </div>
+                </div>
+                <?php endfor; ?>
+            </div>
+            <!-- Real car cards: hidden until JS swaps them in -->
+            <div class="car-grid" id="featured-car-grid" style="display:none;">
                 <?php foreach ($featuredCars as $car): ?>
                     <?php include __DIR__ . '/includes/car-card.php'; ?>
                 <?php endforeach; ?>
@@ -183,19 +209,24 @@ require __DIR__ . '/includes/header.php';
         </div>
 
         <div class="location-grid">
-            <!-- Map Embed -->
+            <!-- Map Embed: click-to-load to avoid blocking initial page render -->
             <div class="location-map">
                 <div class="location-map__frame">
-                    <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3940.5!2d7.491302!3d9.072264!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zOcKwMDQnMjAuMiJOIDfCsDI5JzI4LjciRQ!5e0!3m2!1sen!2sng!4v1&markers=color:red%7C9.072264,7.491302"
-                        width="100%"
-                        height="100%"
-                        style="border:0; border-radius: 12px;"
-                        allowfullscreen=""
-                        loading="lazy"
-                        referrerpolicy="no-referrer-when-downgrade"
-                        title="VA Auto Sales Location on Google Maps"
-                    ></iframe>
+                    <button
+                        type="button"
+                        class="map-placeholder"
+                        id="map-load-btn"
+                        aria-label="Load Google Maps to see our showroom location"
+                        data-map-src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3940.5!2d7.491302!3d9.072264!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zOcKwMDQnMjAuMiJOIDfCsDI5JzI4LjciRQ!5e0!3m2!1sen!2sng!4v1&amp;markers=color:red%7C9.072264,7.491302"
+                    >
+                        <div class="map-placeholder__icon">
+                            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        </div>
+                        <div class="map-placeholder__text">
+                            <strong>Click to load map</strong>
+                            <span>View our showroom on Google Maps</span>
+                        </div>
+                    </button>
                 </div>
                 <a 
                     href="https://maps.app.goo.gl/zEWoCGeWBX3KnqCE6?g_st=aw" 

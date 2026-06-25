@@ -106,12 +106,40 @@ function appConfig(): array
             $config['groq'] = array_merge($config['groq'] ?? [], $localGroq);
         }
 
+        // Merge DB settings if available
+        try {
+            $db = Database::getConnection();
+            $tableCheck = $db->query("SHOW TABLES LIKE 'settings'")->fetch();
+            if ($tableCheck) {
+                $stmt = $db->query("SELECT setting_key, setting_value FROM settings");
+                foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+                    $key = $row['setting_key'];
+                    $val = $row['setting_value'];
+                    
+                    if ($val !== null && (str_starts_with($val, '{') || str_starts_with($val, '['))) {
+                        $decoded = json_decode($val, true);
+                        if (json_last_error() === JSON_ERROR_NONE) {
+                            $val = $decoded;
+                        }
+                    }
+                    $config[$key] = $val;
+                }
+            }
+        } catch (Throwable $e) {
+            // Fail silently
+        }
+
         // Auto-resolve paths (works in subfolder or domain root)
         $config['base_path']   = basePath();
         $config['site_url']    = fullUrl();
         $config['uploads_url'] = url('Backend/uploads/cars');
-        $config['logo_url']      = url('Frontend/assets/images/log.jpg');
-        $config['logo_full_url'] = fullUrl('Frontend/assets/images/log.jpg');
+        
+        if (empty($config['logo_url'])) {
+            $config['logo_url'] = url('Frontend/assets/images/log.jpg');
+        }
+        if (empty($config['logo_full_url'])) {
+            $config['logo_full_url'] = fullUrl('Frontend/assets/images/log.jpg');
+        }
     }
     return $config;
 }

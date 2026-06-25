@@ -15,6 +15,7 @@ $adminUsername = $_SESSION['admin_username'] ?? 'Admin';
     <link rel="icon" href="<?= sanitize($config['logo_url'] ?? url('Frontend/assets/images/log.jpg')) ?>" type="image/jpeg">
     <link rel="stylesheet" href="<?= sanitize(url('Frontend/assets/css/style.css')) ?>">
     <link rel="stylesheet" href="<?= sanitize(url('Backend/admin/assets/admin.css')) ?>">
+    <?php require_once __DIR__ . '/theme-variables.php'; ?>
 </head>
 <body class="admin-body">
     <header class="admin-header">
@@ -54,6 +55,8 @@ $adminUsername = $_SESSION['admin_username'] ?? 'Admin';
                     } catch (Throwable $e) { /* tables may not exist yet */ }
                     ?>
                 </a>
+                <a href="hero-settings.php">Hero Slides</a>
+                <a href="dashboard-settings.php">Settings</a>
                 <a href="<?= sanitize(url('Frontend/index.php')) ?>" target="_blank">View Site</a>
                 <span class="admin-nav__user"><?= sanitize($adminUsername) ?></span>
                 <a href="logout.php" class="btn btn--sm btn--outline">Logout</a>

@@ -24,6 +24,13 @@ $hasActiveFilters = $activeFilterCount > 0;
 
 $pageTitle = 'Browse Cars | ' . $config['site_name'];
 $pageDescription = 'Browse our full inventory of quality pre-owned vehicles. Filter by brand, price, model, and year.';
+
+// Short cache: 30s (filters can vary per user query)
+if (!headers_sent() && !$hasActiveFilters) {
+    header('Cache-Control: public, max-age=30, stale-while-revalidate=15');
+    header('Vary: Accept-Encoding');
+}
+
 require __DIR__ . '/includes/header.php';
 ?>
 
@@ -132,7 +139,26 @@ require __DIR__ . '/includes/header.php';
                 <a href="listings.php" class="btn btn--outline">Clear filters</a>
             </div>
         <?php else: ?>
-            <div class="car-grid" id="car-grid">
+            <!-- Skeleton placeholders: shown instantly, hidden once real cards render -->
+            <div id="skeleton-grid" aria-hidden="true" aria-label="Loading car listings">
+                <?php $skCount = min(count($cars), 6); for ($i = 0; $i < $skCount; $i++): ?>
+                <div class="car-card--skeleton">
+                    <div class="sk-image"></div>
+                    <div class="sk-body">
+                        <div class="sk-title skeleton"></div>
+                        <div class="sk-meta skeleton"></div>
+                        <div class="sk-price skeleton"></div>
+                    </div>
+                    <div class="sk-footer">
+                        <div class="sk-btn skeleton"></div>
+                        <div class="sk-btn skeleton"></div>
+                        <div class="sk-btn skeleton"></div>
+                    </div>
+                </div>
+                <?php endfor; ?>
+            </div>
+            <!-- Real car cards: hidden until JS swaps them in -->
+            <div class="car-grid" id="car-grid" style="display:none;">
                 <?php foreach ($cars as $car): ?>
                     <?php include __DIR__ . '/includes/car-card.php'; ?>
                 <?php endforeach; ?>

@@ -5,6 +5,88 @@
 (function () {
   'use strict';
 
+  // -------------------------------------------------------
+  // Skeleton loader reveal
+  // -------------------------------------------------------
+  function revealGrid(skeletonId, gridId) {
+    var skeleton = document.getElementById(skeletonId);
+    var grid = document.getElementById(gridId);
+    if (!skeleton || !grid) return;
+
+    // Show real grid
+    grid.style.display = '';
+
+    // Fade out skeleton then remove it
+    skeleton.classList.add('skeleton-fade-out');
+    setTimeout(function () {
+      if (skeleton && skeleton.parentNode) {
+        skeleton.parentNode.removeChild(skeleton);
+      }
+    }, 380);
+  }
+
+  function initSkeletonReveal() {
+    // listings.php — main car grid
+    revealGrid('skeleton-grid', 'car-grid');
+    // index.php — featured cars grid
+    revealGrid('skeleton-grid-featured', 'featured-car-grid');
+  }
+
+  // Run skeleton reveal as early as possible
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSkeletonReveal);
+  } else {
+    initSkeletonReveal();
+  }
+
+  // -------------------------------------------------------
+  // Click-to-load Google Maps iframe
+  // -------------------------------------------------------
+  function initMapClickLoad() {
+    var mapBtn = document.getElementById('map-load-btn');
+    if (!mapBtn) return;
+
+    function loadMap() {
+      var mapSrc = mapBtn.getAttribute('data-map-src');
+      if (!mapSrc) return;
+
+      var iframe = document.createElement('iframe');
+      iframe.src = mapSrc;
+      iframe.width = '100%';
+      iframe.height = '100%';
+      iframe.style.cssText = 'border:0; border-radius: 12px;';
+      iframe.setAttribute('allowfullscreen', '');
+      iframe.setAttribute('loading', 'lazy');
+      iframe.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
+      iframe.setAttribute('title', 'VA Auto Sales Location on Google Maps');
+
+      var container = mapBtn.parentNode;
+      container.replaceChild(iframe, mapBtn);
+    }
+
+    mapBtn.addEventListener('click', loadMap);
+
+    // Also auto-load when the map section is near the viewport
+    if ('IntersectionObserver' in window) {
+      var mapObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            mapObserver.disconnect();
+            // Auto-load when within 200px of viewport
+            loadMap();
+          }
+        });
+      }, { rootMargin: '0px 0px 200px 0px' });
+      mapObserver.observe(mapBtn);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMapClickLoad);
+  } else {
+    initMapClickLoad();
+  }
+
   // Mobile nav toggle
   var navToggle = document.querySelector('.nav-toggle');
   var siteNav = document.getElementById('site-nav');
